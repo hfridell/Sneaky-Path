@@ -18,6 +18,30 @@ public class Graph {
   int[][] flows;
   int[][][] shortestPaths;
 
+  int[][][] sneakyPaths;
+  int[][] nextSneaky;
+
+  public ArrayList<Integer> sneakyPath() {
+    return sneakyPath(start, finish);
+  }
+
+  public ArrayList<Integer> sneakyPath(int start, int finish) {
+
+  }
+
+  public void sneakyFloydWarshal() {
+    for (int k = 1; k <= size; k++) {
+      for (int i = 1; i <= size; i++) {
+        for (int j = 1; j <= size; j++) {
+          if (isPathBetter(k, i, j)) {
+            paths[i][j] = sumPaths(k, i, j);
+            nextPath[i][j] = nextPath[i][k];
+          }
+        }
+      }
+    }
+  }
+
 
   public void buildEdgeTraffic() {
     for (int i = 1; i <= size; i++) {
@@ -33,10 +57,12 @@ public class Graph {
           }
           shortestPaths[i][j] = path;
           for (int hop = 1; hop < path.length; hop++) {
-            int current = path[hop - 1];
+            int current = path[hop-1];
             int next = path[hop];
-            edgeTraffic[current][next] += flows[current][next];
+            edgeTraffic[current][next] += flows[i][j];
           }
+        } else {
+          edgeTraffic[i][j] = -1;
         }
       }
     }
@@ -60,7 +86,7 @@ public class Graph {
     return path;
   }
 
-  public void floydWarshal() {
+  public void greedyFloydWarshal() {
     for (int k = 1; k <= size; k++) {
       for (int i = 1; i <= size; i++) {
         for (int j = 1; j <= size; j++) {
