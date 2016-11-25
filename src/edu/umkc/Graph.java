@@ -7,17 +7,20 @@ import java.util.List;
 public class Graph {
   private final static Integer INFINITY = 99999;
   ArrayList<ArrayList<Integer>> flowMatrix;
+  Integer[][] original;
   ArrayList<ArrayList<Integer>> adjacencyMatrix;
-  ArrayList<ArrayList<Integer>> allPairsShortestPath;
   ArrayList<ArrayList<Integer>> nextMatrix;
   ArrayList<ArrayList<Integer>> edgeTraffic;
   ArrayList<ArrayList<ArrayList<Integer>>> shortestPaths;
   int size;
 
   public Graph(ArrayList<ArrayList<Integer>> adjacencyMatrix) {
-    this.adjacencyMatrix = adjacencyMatrix;
-    this.allPairsShortestPath = adjacencyMatrix;
     this.size = adjacencyMatrix.size();
+    this.adjacencyMatrix = adjacencyMatrix;
+    original = new Integer[size][size];
+    for (int i = 0; i < size; i++) {
+      original[i] = adjacencyMatrix.get(i).toArray(original[i]);
+    }
   }
 
   public Graph(ArrayList<ArrayList<Integer>> adjacencyMatrix, ArrayList<ArrayList<Integer>> flowMatrix) {
@@ -45,7 +48,7 @@ public class Graph {
           int iJ = adjacencyMatrix.get(i).get(j);
 
           if ((iK + kJ) < iJ) {
-            allPairsShortestPath.get(i).set(j, (iK + kJ));
+            adjacencyMatrix.get(i).set(j, (iK + kJ));
             nextMatrix.get(i).set(j, nextMatrix.get(i).get(k));
           }
         }
@@ -69,20 +72,6 @@ public class Graph {
     }
 
     return path;
-  }
-
-  private void initializeAllPairsShortestPath() {
-    allPairsShortestPath = new ArrayList<>(size);
-    for(int i = 0; i < size; i++) {
-      allPairsShortestPath.add(i, new ArrayList<>(size));
-      for(int j = 0; j < size; j++) {
-        if (i == j) {
-          allPairsShortestPath.get(i).add(j, 0);
-        } else {
-          allPairsShortestPath.get(i).add(j, null);
-        }
-      }
-    }
   }
 
   public void buildShortestPathMatrix() {
@@ -125,7 +114,7 @@ public class Graph {
       edgeTraffic.add(i, new ArrayList<>(size));
       for (int j = 0; j < size; j++) {
         // if path doesn't exist set to null
-        if (adjacencyMatrix.get(i).get(j).equals(INFINITY)) {
+        if (original[i][j].equals(INFINITY)) {
           edgeTraffic.get(i).add(j, null);
         } else {
           edgeTraffic.get(i).add(j, 0);
