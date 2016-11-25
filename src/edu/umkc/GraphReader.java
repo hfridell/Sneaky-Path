@@ -7,7 +7,7 @@ import java.util.Scanner;
 
 public class GraphReader {
 
-  private final static Integer INFINITY = 99999;
+  private final static Integer INFINITY = 999999;
   String fileName = "CS404FS16SneakyPathInput1.txt";
   File file;
   Integer size;

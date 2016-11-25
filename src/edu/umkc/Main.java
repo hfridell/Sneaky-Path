@@ -11,12 +11,13 @@ import java.util.Scanner;
 public class Main {
 
   final static boolean writeToFile = true;
-  final static boolean runAllFiles = false;
+  final static boolean runAllFiles = true;
 
   final static String[] files = {
       "CS404FS16SneakyPathInput1.txt",
       "CS404FS16SneakyPathInputN10b.txt",
       "CS404FS16SneakyPathInputN10c.txt",
+      "CS404FS16SneakyPathInputN10d.txt",
       "CS404FS16SneakyPathInputN15a.txt",
       "CS404FS16SneakyPathInputN15b.txt",
       "CS404FS16SneakyPathInputN20a.txt",
@@ -77,7 +78,7 @@ public class Main {
 
     start = Instant.now();
     System.out.println("All pairs shortest paths:");
-    original.floydWarshal();
+    original.floydWarshall();
     end = Instant.now();
     original.printMatrix();
     System.out.println("All pairs shortest paths:");
@@ -110,7 +111,7 @@ public class Main {
 
     start = Instant.now();
     Graph sneaky = new Graph(original.edgeTraffic);
-    sneaky.floydWarshal();
+    sneaky.floydWarshall();
     System.out.println("All pairs sneaky paths:");
     end = Instant.now();
     sneaky.printMatrix();

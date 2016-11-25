@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Graph {
-  private final static Integer INFINITY = 99999;
+  private final static Integer INFINITY = 999999;
   ArrayList<ArrayList<Integer>> flowMatrix;
   Integer[][] original;
   ArrayList<ArrayList<Integer>> adjacencyMatrix;
@@ -99,7 +99,7 @@ public class Graph {
             // -1 for offset
             int current = path.get(hop - 1) - 1;
             int next = path.get(hop) - 1;
-            if (edgeTraffic.get(current).get(next) == null) {
+            if (edgeTraffic.get(current).get(next) == null || edgeTraffic.get(current).get(next).equals(INFINITY)) {
               edgeTraffic.get(current).set(next, flowMatrix.get(i).get(j));
             } else {
               int newValue = flowMatrix.get(i).get(j);
@@ -143,7 +143,11 @@ public class Graph {
   public static void printMatrix(ArrayList<ArrayList<Integer>> matrix) {
     for (List<Integer> col : matrix) {
       for (Integer x : col) {
-        System.out.format("%8d,", x);
+        if (x.equals(INFINITY)) {
+          System.out.format("%8s,", "NA");
+        } else {
+          System.out.format("%8d,", x);
+        }
       }
       System.out.println();
     }
@@ -209,6 +213,7 @@ public class Graph {
           pathCost.add(original[current][next]);
         }
         maxPathCosts[i][j] = max;
+
         minPathCosts[i][j] = min;
         avgPathCosts[i][j] = pathAvg(pathCost);
       }
