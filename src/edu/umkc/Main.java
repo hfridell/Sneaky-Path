@@ -61,7 +61,6 @@ public class Main {
     GraphReader reader = new GraphReader(fileName);
     reader.read();
     end = Instant.now();
-    System.out.println("Parsing file: " + fileName);
     System.out.println("Elapsed Time: " + Duration.between(start, end));
     int startNode = reader.start-1;
     int finishNode = reader.finish-1;
@@ -70,8 +69,8 @@ public class Main {
     start = Instant.now();
     Graph original = new Graph(reader.getPathMatrix(), reader.getFlowMatrix());
     System.out.println("Original:");
-    original.printMatrix();
     end = Instant.now();
+    original.printMatrix();
     System.out.println("Original:");
     System.out.println("Elapsed Time: " + Duration.between(start, end));
     System.out.println("-----------------------------------------------------------------------------");
@@ -79,8 +78,8 @@ public class Main {
     start = Instant.now();
     System.out.println("All pairs shortest paths:");
     original.floydWarshal();
-    original.printMatrix();
     end = Instant.now();
+    original.printMatrix();
     System.out.println("All pairs shortest paths:");
     System.out.println("Elapsed Time: " + Duration.between(start, end));
     System.out.println("-----------------------------------------------------------------------------");
@@ -113,8 +112,8 @@ public class Main {
     Graph sneaky = new Graph(original.edgeTraffic);
     sneaky.floydWarshal();
     System.out.println("All pairs sneaky paths:");
-    sneaky.printMatrix();
     end = Instant.now();
+    sneaky.printMatrix();
     System.out.println("All pairs sneaky paths:");
     System.out.println("Elapsed Time: " + Duration.between(start, end));
     System.out.println("-----------------------------------------------------------------------------");
