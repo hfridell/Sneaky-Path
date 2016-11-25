@@ -28,6 +28,11 @@ public class Main {
     original.printEdgeTraffic();
     System.out.println("-----------------------------------------------------------------------------");
 
+    Graph sneaky = new Graph(original.edgeTraffic);
+    sneaky.floydWarshal();
+    System.out.println("All pairs sneaky paths:");
+    sneaky.printMatrix();
+    System.out.println("-----------------------------------------------------------------------------");
 
   }
 }

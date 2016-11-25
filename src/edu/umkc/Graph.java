@@ -115,7 +115,7 @@ public class Graph {
       for (int j = 0; j < size; j++) {
         // if path doesn't exist set to null
         if (original[i][j].equals(INFINITY)) {
-          edgeTraffic.get(i).add(j, null);
+          edgeTraffic.get(i).add(j, INFINITY);
         } else {
           edgeTraffic.get(i).add(j, 0);
         }
@@ -152,7 +152,7 @@ public class Graph {
         Integer value = edgeTraffic.get(i).get(j);
         if (i == j && value == null) {
           System.out.format("%8s", "0");
-        } else if (value == null) {
+        } else if (value.equals(INFINITY)) {
           System.out.format("%8s", "NA");
         } else {
           System.out.format("%8d", value);
