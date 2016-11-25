@@ -10,18 +10,20 @@ public class GraphReader {
   private final static Integer INFINITY = 99999;
   String fileName = "CS404FS16SneakyPathInput1.txt";
   File file;
-  private Integer size;
-  private Integer start;
-  private Integer finish;
+  Integer size;
+  Integer start;
+  Integer finish;
 
   private ArrayList<ArrayList<Integer>> pathMatrix;
   private ArrayList<ArrayList<Integer>> flowMatrix;
 
   public GraphReader(String fileName) {
-    this.fileName = "CS404FS16SneakyPathInput1.txt";
-    //this.fileName = fileName;
-
+    this.fileName = fileName;
     file = new File(this.fileName);
+  }
+
+  public GraphReader() {
+    this("CS404FS16SneakyPathInput1.txt");
   }
 
   public void read() {
@@ -36,8 +38,15 @@ public class GraphReader {
       initializeMatrixs();
 
       // Read in Edge and Flow information:  Type(E/F), start, end, weight
-      while (in.hasNext()) {
-        String[] nextLine = in.nextLine().split(",");
+      String line;
+      while (in.hasNextLine()) {
+        line = in.nextLine();
+        // Skip Blank Lines
+        if (line.isEmpty()){
+          continue;
+        }
+
+        String[] nextLine = line.split(",");
         String type = nextLine[0].trim();
 
         // adjust for 0 based index
