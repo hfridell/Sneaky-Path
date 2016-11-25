@@ -11,7 +11,7 @@ import java.util.Scanner;
 public class Main {
 
   final static boolean writeToFile = true;
-  final static boolean runAllFiles = true;
+  final static boolean runAllFiles = false;
 
   final static String[] files = {
       "CS404FS16SneakyPathInput1.txt",
