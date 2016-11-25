@@ -1,192 +1,194 @@
 package edu.umkc;
-import java.io.File;
-import java.io.FileNotFoundException;
+
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Scanner;
-import java.util.concurrent.RejectedExecutionException;
+import java.util.List;
 
 public class Graph {
-  private final int inf = Integer.MAX_VALUE / 2;
+  private final static Integer INFINITY = 99999;
+  ArrayList<ArrayList<Integer>> flowMatrix;
+  ArrayList<ArrayList<Integer>> adjacencyMatrix;
+  ArrayList<ArrayList<Integer>> allPairsShortestPath;
+  ArrayList<ArrayList<Integer>> nextMatrix;
+  ArrayList<ArrayList<Integer>> edgeTraffic;
+  ArrayList<ArrayList<ArrayList<Integer>>> shortestPaths;
   int size;
-  int start;
-  int finish;
-  //private ArrayList<Integer> nodes;
-  int[][] paths;
-  int[][] nextPath;
-  int[][] edgeTraffic;
-  int[][] flows;
-  int[][][] shortestPaths;
 
-  int[][][] sneakyPaths;
-  int[][] nextSneaky;
-
-  public ArrayList<Integer> sneakyPath() {
-    return sneakyPath(start, finish);
+  public Graph(ArrayList<ArrayList<Integer>> adjacencyMatrix) {
+    this.adjacencyMatrix = adjacencyMatrix;
+    this.allPairsShortestPath = adjacencyMatrix;
+    this.size = adjacencyMatrix.size();
   }
 
-  public ArrayList<Integer> sneakyPath(int start, int finish) {
-
+  public Graph(ArrayList<ArrayList<Integer>> adjacencyMatrix, ArrayList<ArrayList<Integer>> flowMatrix) {
+    this(adjacencyMatrix);
+    this.flowMatrix = flowMatrix;
   }
 
-  public void sneakyFloydWarshal() {
-    for (int k = 1; k <= size; k++) {
-      for (int i = 1; i <= size; i++) {
-        for (int j = 1; j <= size; j++) {
-          if (isPathBetter(k, i, j)) {
-            paths[i][j] = sumPaths(k, i, j);
-            nextPath[i][j] = nextPath[i][k];
+  public void floydWarshal() {
+    // Build matrix for path reconstruction
+    nextMatrix = new ArrayList<>(size);
+    for (Integer i = 0; i < size; i++) {
+      nextMatrix.add(i, new ArrayList<>(size));
+      for (Integer j = 0; j < size; j++) {
+        nextMatrix.get(i).add(j, j);
+      }
+    }
+
+    //initializeAllPairsShortestPath();
+    // Floyd Warshal
+    for (int k = 0; k < size; k++) {
+      for (int i = 0; i < size; i++) {
+        for (int j = 0; j < size; j++) {
+          int iK = adjacencyMatrix.get(i).get(k);
+          int kJ = adjacencyMatrix.get(k).get(j);
+          int iJ = adjacencyMatrix.get(i).get(j);
+
+          if ((iK + kJ) < iJ) {
+            allPairsShortestPath.get(i).set(j, (iK + kJ));
+            nextMatrix.get(i).set(j, nextMatrix.get(i).get(k));
           }
         }
       }
     }
   }
 
-
-  public void buildEdgeTraffic() {
-    for (int i = 1; i <= size; i++) {
-      for (int j = 1; j <= size; j++) {
-        ArrayList<Integer> shortPath = getShortestPath(i, j);
-        if (shortPath != null) {
-          // Convert to array
-          int[] path = new int[shortPath.size()];
-          for (int x = 0; x < shortPath.size(); x++) {
-            if (shortPath.get(x) != null) {
-              path[x] = shortPath.get(x);
-            }
-          }
-          shortestPaths[i][j] = path;
-          for (int hop = 1; hop < path.length; hop++) {
-            int current = path[hop-1];
-            int next = path[hop];
-            edgeTraffic[current][next] += flows[i][j];
-          }
-        } else {
-          edgeTraffic[i][j] = -1;
-        }
-      }
-    }
-  }
-
-  public ArrayList<Integer> getShortestPath() {
-    return getShortestPath(start, finish);
-  }
-
-  public ArrayList<Integer> getShortestPath(int start, int finish) {
-
-    if (nextPath[start][finish] == inf) {
+  public ArrayList<Integer> path(int start, int end) {
+    if (nextMatrix.get(start).get(end) == null) {
       return null;
     }
+
     ArrayList<Integer> path = new ArrayList<>();
-    path.add(start);
-    while (start != finish) {
-      start = nextPath[start][finish];
-      path.add(start);
+    int current = start;
+    // add offset to display 1 based array
+    path.add(current + 1);
+    // move through matrix until we reach the end
+    while (current != end) {
+      current = nextMatrix.get(current).get(end);
+      path.add(current + 1);
     }
+
     return path;
   }
 
-  public void greedyFloydWarshal() {
-    for (int k = 1; k <= size; k++) {
-      for (int i = 1; i <= size; i++) {
-        for (int j = 1; j <= size; j++) {
-          if (isPathBetter(k, i, j)) {
-            paths[i][j] = sumPaths(k, i, j);
-            nextPath[i][j] = nextPath[i][k];
+  private void initializeAllPairsShortestPath() {
+    allPairsShortestPath = new ArrayList<>(size);
+    for(int i = 0; i < size; i++) {
+      allPairsShortestPath.add(i, new ArrayList<>(size));
+      for(int j = 0; j < size; j++) {
+        if (i == j) {
+          allPairsShortestPath.get(i).add(j, 0);
+        } else {
+          allPairsShortestPath.get(i).add(j, null);
+        }
+      }
+    }
+  }
+
+  public void buildShortestPathMatrix() {
+    if (shortestPaths == null) {
+      initializeShortestPaths();
+      for (int i = 0; i < size; i++) {
+        for (int j = 0; j < size; j++) {
+          shortestPaths.get(i).add(j, path(i, j));
+        }
+      }
+    }
+  }
+
+  public void buildEdgeTraffic() {
+    if (edgeTraffic == null) {
+      initializeEdgeTraffic();
+      for (int i = 0; i < size; i++) {
+        for (int j = 0; j < size; j++) {
+          ArrayList<Integer> path = shortestPaths.get(i).get(j);
+          for (int hop = 1; hop < path.size(); hop++) {
+            // -1 for offset
+            int current = path.get(hop - 1) - 1;
+            int next = path.get(hop) - 1;
+            if (edgeTraffic.get(current).get(next) == null) {
+              edgeTraffic.get(current).set(next, flowMatrix.get(i).get(j));
+            } else {
+              int newValue = flowMatrix.get(i).get(j);
+              newValue += edgeTraffic.get(current).get(next);
+              edgeTraffic.get(current).set(next, newValue);
+            }
           }
         }
       }
     }
   }
 
-  private void setupArrays() {
-    paths = new int[size + 1][size + 1];
-    nextPath = new int[size + 1][size + 1];
-    flows = new int[size + 1][size + 1];
-    edgeTraffic = new int[size + 1][size + 1];
-    shortestPaths = new int[size + 1][size + 1][];
-    for (int i = 1; i <= size; i++) {
-      for (int j = 1; j <= size; j++) {
-        if (i == j) {
-          paths[i][j] = 0;
+  private void initializeEdgeTraffic() {
+    edgeTraffic = new ArrayList<>(size);
+    for (int i = 0; i < size; i++) {
+      edgeTraffic.add(i, new ArrayList<>(size));
+      for (int j = 0; j < size; j++) {
+        // if path doesn't exist set to null
+        if (adjacencyMatrix.get(i).get(j).equals(INFINITY)) {
+          edgeTraffic.get(i).add(j, null);
         } else {
-          paths[i][j] = inf;
+          edgeTraffic.get(i).add(j, 0);
         }
-        nextPath[i][j] = j;
       }
     }
   }
 
-  private int sumPaths(int k, int i, int j) {
-    return paths[i][k] + paths[k][j];
-  }
-
-  private boolean isPathBetter(int k, int i, int j) {
-    return paths[i][k] + paths[k][j] < paths[i][j];
-  }
-
-  public void readInput() {
-    //String fileName = getFileName();
-    String fileName = "CS404FS16SneakyPathInput1.txt";
-    File file = new File(fileName);
-
-    try {
-      Scanner in = new Scanner(file);
-      String[] firstLine = in.nextLine().split(",");
-      // Read in size info: size, start, end
-      size = Integer.parseInt(firstLine[0].trim());
-      start = Integer.parseInt(firstLine[1].trim());
-      finish = Integer.parseInt(firstLine[2].trim());
-
-      // initialize arrays
-      setupArrays();
-
-
-      // Read in Edge and Flow information:  Type(E/F), start, end, weight
-      while (in.hasNext()) {
-        String[] nextLine = in.nextLine().split(",");
-        String type = nextLine[0].trim();
-        int start = Integer.parseInt(nextLine[1].trim());
-        int end = Integer.parseInt(nextLine[2].trim());
-        int weight = Integer.parseInt(nextLine[3].trim());
-
-        // Determine if Edge or Flow values
-        if (type.equals("E")) {
-          paths[start][end] = weight;
-        } else if (type.equals("F")) {
-          flows[start][end] = weight;
+  public void printMatrix() {
+    for (List<Integer> col : adjacencyMatrix) {
+      for (Integer x : col) {
+        if (x.equals(INFINITY)) {
+          System.out.format("%8s", "NA");
         } else {
-          throw new RejectedExecutionException("File contained unexpected character");
+          System.out.format("%8d", x);
         }
-      }
-    } catch (FileNotFoundException e) {
-      e.printStackTrace();
-    }
-  }
-
-  private String getFileName() {
-    Scanner input = new Scanner(System.in);
-    System.out.print("Enter input file name: ");
-    return input.nextLine();
-  }
-
-  public void printMatrix(int[][] matrix) {
-
-    for (int i = 1; i < matrix.length; i++) {
-      for (int j = 1; j < matrix[i].length; j++) {
-        System.out.format("%4d", matrix[i][j]);
       }
       System.out.println();
     }
   }
+
+  public static void printMatrix(ArrayList<ArrayList<Integer>> matrix) {
+    for (List<Integer> col : matrix) {
+      for (Integer x : col) {
+        System.out.format("%8d", x);
+      }
+      System.out.println();
+    }
+  }
+
+  public void printEdgeTraffic() {
+    buildEdgeTraffic();
+    for (int i = 0; i < size; i++) {
+      for (int j = 0; j < size; j++) {
+        Integer value = edgeTraffic.get(i).get(j);
+        if (i == j && value == null) {
+          System.out.format("%8s", "0");
+        } else if (value == null) {
+          System.out.format("%8s", "NA");
+        } else {
+          System.out.format("%8d", value);
+        }
+      }
+      System.out.println();
+    }
+    System.out.println();
+  }
+
 
   public void printShortestPaths() {
-
-    for (int i = 1; i < shortestPaths.length; i++) {
-      for (int j = 1; j < shortestPaths[i].length; j++) {
-        System.out.format("%15s", Arrays.toString(shortestPaths[i][j]));
+    buildShortestPathMatrix();
+    for (ArrayList<ArrayList<Integer>> col : shortestPaths) {
+      for (ArrayList<Integer> path : col) {
+        System.out.format("%15s", Arrays.toString(path.toArray()));
       }
       System.out.println();
+    }
+  }
+
+  private void initializeShortestPaths() {
+    shortestPaths = new ArrayList<>(size);
+    for (int i = 0; i < size; i++) {
+      shortestPaths.add(i, new ArrayList<>(size));
     }
   }
 }

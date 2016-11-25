@@ -1,22 +1,33 @@
 package edu.umkc;
 
+import java.util.ArrayList;
+
 public class Main {
 
   public static void main(String[] args) {
-    Graph graph = new Graph();
-    graph.readInput();
+    GraphReader reader = new GraphReader("test");
+    reader.read();
 
-    graph.greedyFloydWarshal();
+    Graph original = new Graph(reader.getPathMatrix(), reader.getFlowMatrix());
+    System.out.println("-----------------------------------------------------------------------------");
+    System.out.println("Original:");
+    original.printMatrix();
+    System.out.println("-----------------------------------------------------------------------------");
 
-    System.out.println("My Distance:");
-    graph.printMatrix(graph.paths);
-    graph.buildEdgeTraffic();
-    System.out.println("Shortest Paths:");
-    graph.printShortestPaths();
-    System.out.println("Path Traffic:");
-    graph.printMatrix(graph.flows);
-
+    System.out.println("All pairs shortest paths:");
+    original.floydWarshal();
+    original.printMatrix();
+    System.out.println("-----------------------------------------------------------------------------");
+    System.out.println("Actual shortest paths:");
+    original.printShortestPaths();
+    System.out.println("-----------------------------------------------------------------------------");
+    System.out.println("Original flow Matrix:");
+    Graph.printMatrix(original.flowMatrix);
+    System.out.println("-----------------------------------------------------------------------------");
     System.out.println("Edge Traffic:");
-    graph.printMatrix(graph.edgeTraffic);
+    original.printEdgeTraffic();
+    System.out.println("-----------------------------------------------------------------------------");
+
+
   }
 }
