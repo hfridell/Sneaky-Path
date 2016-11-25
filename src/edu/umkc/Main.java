@@ -11,7 +11,8 @@ import java.util.Scanner;
 public class Main {
 
   final static boolean writeToFile = true;
-  final static boolean runAllFiles = true;
+  final static boolean runAllFiles = false;
+
   final static String[] files = {
       "CS404FS16SneakyPathInput1.txt",
       "CS404FS16SneakyPathInputN10b.txt",
@@ -31,7 +32,9 @@ public class Main {
 
   public static void main(String[] args) {
     if (runAllFiles){
-
+      for (String fileName : files) {
+        evaluateFile(fileName);
+      }
     } else {
       String fileName = getFileName();
       evaluateFile(fileName);
@@ -58,6 +61,7 @@ public class Main {
     GraphReader reader = new GraphReader(fileName);
     reader.read();
     end = Instant.now();
+    System.out.println("Parsing file: " + fileName);
     System.out.println("Elapsed Time: " + Duration.between(start, end));
     int startNode = reader.start-1;
     int finishNode = reader.finish-1;
@@ -68,6 +72,7 @@ public class Main {
     System.out.println("Original:");
     original.printMatrix();
     end = Instant.now();
+    System.out.println("Original:");
     System.out.println("Elapsed Time: " + Duration.between(start, end));
     System.out.println("-----------------------------------------------------------------------------");
 
@@ -76,6 +81,7 @@ public class Main {
     original.floydWarshal();
     original.printMatrix();
     end = Instant.now();
+    System.out.println("All pairs shortest paths:");
     System.out.println("Elapsed Time: " + Duration.between(start, end));
     System.out.println("-----------------------------------------------------------------------------");
 
@@ -83,6 +89,7 @@ public class Main {
     System.out.println("Actual shortest paths:");
     original.printShortestPaths();
     end = Instant.now();
+    System.out.println("Actual shortest paths:");
     System.out.println("Elapsed Time: " + Duration.between(start, end));
     System.out.println("-----------------------------------------------------------------------------");
 
@@ -90,6 +97,7 @@ public class Main {
     System.out.println("Original flow Matrix:");
     Graph.printMatrix(original.flowMatrix);
     end = Instant.now();
+    System.out.println("Original flow Matrix:");
     System.out.println("Elapsed Time: " + Duration.between(start, end));
     System.out.println("-----------------------------------------------------------------------------");
 
@@ -97,6 +105,7 @@ public class Main {
     System.out.println("Edge Traffic:");
     original.printEdgeTraffic();
     end = Instant.now();
+    System.out.println("Edge Traffic:");
     System.out.println("Elapsed Time: " + Duration.between(start, end));
     System.out.println("-----------------------------------------------------------------------------");
 
@@ -106,6 +115,7 @@ public class Main {
     System.out.println("All pairs sneaky paths:");
     sneaky.printMatrix();
     end = Instant.now();
+    System.out.println("All pairs sneaky paths:");
     System.out.println("Elapsed Time: " + Duration.between(start, end));
     System.out.println("-----------------------------------------------------------------------------");
 
@@ -113,17 +123,15 @@ public class Main {
     System.out.println("Actual sneaky paths:");
     sneaky.printShortestPaths();
     end = Instant.now();
+    System.out.println("Actual sneaky paths:");
     System.out.println("Elapsed Time: " + Duration.between(start, end));
-    System.out.println("-----------------------------------------------------------------------------");
-
-    Instant totalEnd = Instant.now();
-    System.out.println("Total Running time: " + Duration.between(totalStart, totalEnd));
     System.out.println("-----------------------------------------------------------------------------");
 
     start = Instant.now();
     System.out.println("Minimum cars seen:");
     sneaky.printMinPaths();
     end = Instant.now();
+    System.out.println("Minimum cars seen:");
     System.out.println("Elapsed Time: " + Duration.between(start, end));
     System.out.println("-----------------------------------------------------------------------------");
 
@@ -131,6 +139,7 @@ public class Main {
     System.out.println("Maximum cars seen:");
     sneaky.printMaxPaths();
     end = Instant.now();
+    System.out.println("Maximum cars seen:");
     System.out.println("Elapsed Time: " + Duration.between(start, end));
     System.out.println("-----------------------------------------------------------------------------");
 
@@ -138,6 +147,7 @@ public class Main {
     System.out.println("Average cars seen:");
     sneaky.printAvgPaths();
     end = Instant.now();
+    System.out.println("Average cars seen:");
     System.out.println("Elapsed Time: " + Duration.between(start, end));
     System.out.println("-----------------------------------------------------------------------------");
 
@@ -147,6 +157,10 @@ public class Main {
 
     System.out.println("Specified Sneaky Path: "+ reader.start + "," + reader.finish);
     sneaky.printPath(startNode, finishNode);
+    System.out.println("-----------------------------------------------------------------------------");
+
+    Instant totalEnd = Instant.now();
+    System.out.println("Total Running time: " + Duration.between(totalStart, totalEnd));
     System.out.println("-----------------------------------------------------------------------------");
     System.out.println("-----------------------------------------------------------------------------");
   }
