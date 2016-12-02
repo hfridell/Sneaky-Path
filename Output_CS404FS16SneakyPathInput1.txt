@@ -2,7 +2,7 @@
 Hank Fridell
 -----------------------------------------------------------------------------
 Parsing file: CS404FS16SneakyPathInput1.txt
-Elapsed Time: PT0.024S
+Elapsed Time: 1
 -----------------------------------------------------------------------------
 Original:
        0,       7,      NA,       7,      NA,       9,
@@ -12,7 +12,7 @@ Original:
        3,       5,      10,      10,       0,      NA,
       NA,       5,       8,      10,      NA,       0,
 Original:
-Elapsed Time: PT0.001S
+Elapsed Time: 0
 -----------------------------------------------------------------------------
 All pairs shortest paths:
        0,       7,       9,       7,      13,       9,
@@ -22,7 +22,7 @@ All pairs shortest paths:
        3,       5,      10,      10,       0,       8,
       15,       5,       8,      10,      12,       0,
 All pairs shortest paths:
-Elapsed Time: PT0S
+Elapsed Time: 0
 -----------------------------------------------------------------------------
 Actual shortest paths:
             [1],         [1, 2],      [1, 4, 3],         [1, 4],   [1, 4, 3, 5],         [1, 6],
@@ -32,7 +32,7 @@ Actual shortest paths:
          [5, 1],         [5, 2],         [5, 3],         [5, 4],            [5],      [5, 2, 6],
    [6, 3, 5, 1],         [6, 2],         [6, 3],         [6, 4],      [6, 3, 5],            [6],
 Actual shortest paths:
-Elapsed Time: PT0.002S
+Elapsed Time: 1
 -----------------------------------------------------------------------------
 Original flow Matrix:
        0,       9,      11,      12,       8,      12,
@@ -42,7 +42,7 @@ Original flow Matrix:
       15,       9,      12,      14,       0,      16,
       18,      16,      15,       8,       9,       0,
 Original flow Matrix:
-Elapsed Time: PT0.003S
+Elapsed Time: 0
 -----------------------------------------------------------------------------
 Edge Traffic:
        0,       9,      NA,      31,      NA,      12,
@@ -53,7 +53,7 @@ Edge Traffic:
       NA,      16,      42,       8,      NA,       0,
 
 Edge Traffic:
-Elapsed Time: PT0.002S
+Elapsed Time: 0
 -----------------------------------------------------------------------------
 All pairs sneaky paths:
        0,       9,      21,      20,       9,      12,
@@ -63,7 +63,7 @@ All pairs sneaky paths:
       12,      12,      12,      14,       0,      22,
       25,      16,      28,       8,      16,       0,
 All pairs sneaky paths:
-Elapsed Time: PT0.001S
+Elapsed Time: 0
 -----------------------------------------------------------------------------
 Actual sneaky paths:
             [1],         [1, 2],   [1, 2, 5, 3],      [1, 6, 4],      [1, 2, 5],         [1, 6],
@@ -73,7 +73,7 @@ Actual sneaky paths:
       [5, 3, 1],      [5, 3, 2],         [5, 3],         [5, 4],            [5],      [5, 3, 6],
       [6, 4, 1],         [6, 2],   [6, 2, 5, 3],         [6, 4],      [6, 2, 5],            [6],
 Actual sneaky paths:
-Elapsed Time: PT0.002S
+Elapsed Time: 0
 -----------------------------------------------------------------------------
 Minimum cars seen:
        0,       9,       0,       8,       0,      12,
@@ -84,7 +84,7 @@ Minimum cars seen:
        8,      16,       0,       8,       0,       0,
 
 Minimum cars seen:
-Elapsed Time: PT0.002S
+Elapsed Time: 0
 -----------------------------------------------------------------------------
 Maximum cars seen:
        0,       9,      12,      12,       9,      12,
@@ -95,7 +95,7 @@ Maximum cars seen:
       17,      16,      16,       8,      16,       0,
 
 Maximum cars seen:
-Elapsed Time: PT0.001S
+Elapsed Time: 1
 -----------------------------------------------------------------------------
 Average cars seen:
        0,     9.0,     7.0,    10.0,     4.5,    12.0,
@@ -106,7 +106,7 @@ Average cars seen:
     12.5,    16.0,     9.3,     8.0,     8.0,       0,
 
 Average cars seen:
-Elapsed Time: PT0.002S
+Elapsed Time: 0
 -----------------------------------------------------------------------------
 Specified Shortest Path: 6,3
 [6, 3]
@@ -120,6 +120,6 @@ Min path cost: 0
 Max path cost: 16
 Avg path cost: 9.333333333333334
 -----------------------------------------------------------------------------
-Total Running time: PT0.05S
+Total Running time: 4
 -----------------------------------------------------------------------------
 -----------------------------------------------------------------------------

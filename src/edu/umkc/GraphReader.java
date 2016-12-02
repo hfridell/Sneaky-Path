@@ -22,6 +22,7 @@ public class GraphReader {
     file = new File(this.fileName);
   }
 
+  // Default Constructor uses the first sample file
   public GraphReader() {
     this("CS404FS16SneakyPathInput1.txt");
   }
@@ -71,6 +72,8 @@ public class GraphReader {
     }
   }
 
+  // Set default values to INFINITY
+  // 0 values is set for weight to self
   private void initializeMatrixs() {
     pathMatrix = new ArrayList<>(size);
     flowMatrix = new ArrayList<>(size);
@@ -89,6 +92,8 @@ public class GraphReader {
     }
   }
 
+
+  // Helper functions
   public static Integer getINFINITY() {
     return INFINITY;
   }

@@ -6,16 +6,18 @@ import java.util.List;
 
 public class Graph {
   private final static Integer INFINITY = 999999;
+  int size;
+  // 2-D arrays
   ArrayList<ArrayList<Integer>> flowMatrix;
   Integer[][] original;
   ArrayList<ArrayList<Integer>> adjacencyMatrix;
   ArrayList<ArrayList<Integer>> nextMatrix;
   ArrayList<ArrayList<Integer>> edgeTraffic;
-  ArrayList<ArrayList<ArrayList<Integer>>> shortestPaths;
   Integer[][] minPathCosts;
   Integer[][] maxPathCosts;
   Double[][] avgPathCosts;
-  int size;
+  // 3-D array
+  ArrayList<ArrayList<ArrayList<Integer>>> shortestPaths;
 
   public Graph(ArrayList<ArrayList<Integer>> adjacencyMatrix) {
     this.size = adjacencyMatrix.size();
@@ -31,6 +33,20 @@ public class Graph {
     this.flowMatrix = flowMatrix;
   }
 
+  // Print given matrix to standard out, Infinity values are aliased to NA
+  public static void printMatrix(ArrayList<ArrayList<Integer>> matrix) {
+    for (List<Integer> col : matrix) {
+      for (Integer x : col) {
+        if (x.equals(INFINITY)) {
+          System.out.format("%8s,", "NA");
+        } else {
+          System.out.format("%8d,", x);
+        }
+      }
+      System.out.println();
+    }
+  }
+
   public void floydWarshall() {
     // https://en.wikipedia.org/wiki/Floyd%E2%80%93Warshall_algorithm#Path_reconstruction
     // Build matrix for path reconstruction
@@ -42,7 +58,6 @@ public class Graph {
       }
     }
 
-    //initializeAllPairsShortestPath();
     // Floyd Warshall
     for (int k = 0; k < size; k++) {
       for (int i = 0; i < size; i++) {
@@ -51,6 +66,7 @@ public class Graph {
           int kJ = adjacencyMatrix.get(k).get(j);
           int iJ = adjacencyMatrix.get(i).get(j);
 
+          // If new path is better
           if ((iK + kJ) < iJ) {
             adjacencyMatrix.get(i).set(j, (iK + kJ));
             nextMatrix.get(i).set(j, nextMatrix.get(i).get(k));
@@ -60,7 +76,9 @@ public class Graph {
     }
   }
 
+  // Build an individual Path
   public ArrayList<Integer> path(int start, int end) {
+    // if no path exits return null
     if (nextMatrix.get(start).get(end) == null) {
       return null;
     }
@@ -79,6 +97,7 @@ public class Graph {
   }
 
   public void buildShortestPathMatrix() {
+    // Don't rebuild matrix if work has already been done
     if (shortestPaths == null) {
       initializeShortestPaths();
       for (int i = 0; i < size; i++) {
@@ -95,13 +114,16 @@ public class Graph {
       for (int i = 0; i < size; i++) {
         for (int j = 0; j < size; j++) {
           ArrayList<Integer> path = shortestPaths.get(i).get(j);
+          // For each hop in the path add the flow from i to j
           for (int hop = 1; hop < path.size(); hop++) {
             // -1 for offset
             int current = path.get(hop - 1) - 1;
             int next = path.get(hop) - 1;
-            if (edgeTraffic.get(current).get(next) == null || edgeTraffic.get(current).get(next).equals(INFINITY)) {
+            // if i,j value is not set assign value
+            if (edgeTraffic.get(current).get(next) == null) {
               edgeTraffic.get(current).set(next, flowMatrix.get(i).get(j));
             } else {
+              // i,j already has value, add to it
               int newValue = flowMatrix.get(i).get(j);
               newValue += edgeTraffic.get(current).get(next);
               edgeTraffic.get(current).set(next, newValue);
@@ -112,6 +134,7 @@ public class Graph {
     }
   }
 
+  // initialize Edge Traffic to 0 unless path isn't in adjacency
   private void initializeEdgeTraffic() {
     edgeTraffic = new ArrayList<>(size);
     for (int i = 0; i < size; i++) {
@@ -127,6 +150,78 @@ public class Graph {
     }
   }
 
+  public void pathCosts() {
+    maxPathCosts = new Integer[size][size];
+    minPathCosts = new Integer[size][size];
+    avgPathCosts = new Double[size][size];
+
+    // Calculate Min, Max, Average paths
+    for (int i = 0; i < size; i++) {
+      for (int j = 0; j < size; j++) {
+        int max = -1;
+        int min = INFINITY;
+        ArrayList<Integer> pathCost = new ArrayList<>();
+        // if path doesn't exist set min/max/avg to null and move to next
+        if (shortestPaths.get(i).get(j) == null) {
+          maxPathCosts[i][j] = null;
+          minPathCosts[i][j] = null;
+          avgPathCosts[i][j] = null;
+          continue;
+        }
+
+        ArrayList<Integer> path = shortestPaths.get(i).get(j);
+        for (int hop = 1; hop < path.size(); hop++) {
+          // -1 for offset
+          int current = path.get(hop - 1) - 1;
+          int next = path.get(hop) - 1;
+
+          // set min/max based on new value
+          if (original[current][next] > max) {
+            max = original[current][next];
+          }
+          if (original[current][next] < min) {
+            min = original[current][next];
+          }
+          // add cost to running total
+          pathCost.add(original[current][next]);
+        }
+        maxPathCosts[i][j] = max;
+        minPathCosts[i][j] = min;
+        avgPathCosts[i][j] = pathAvg(pathCost);
+      }
+    }
+  }
+
+  // calculate avg in path
+  private double pathAvg(ArrayList<Integer> path) {
+    double sum = 0;
+    for (int hop : path)
+      sum += hop;
+    return sum / path.size();
+  }
+
+  private void initializeShortestPaths() {
+    shortestPaths = new ArrayList<>(size);
+    for (int i = 0; i < size; i++) {
+      shortestPaths.add(i, new ArrayList<>(size));
+    }
+  }
+
+  public void printPath(int x, int y) {
+    // if costs haven't been calculated evaluate now
+    if (maxPathCosts == null)
+      pathCosts();
+
+    ArrayList<Integer> path = path(x, y);
+    System.out.println(Arrays.toString(
+        path.toArray()));
+
+    System.out.println("Min path cost: " + minPathCosts[x][y]);
+    System.out.println("Max path cost: " + maxPathCosts[x][y]);
+    System.out.println("Avg path cost: " + avgPathCosts[x][y]);
+  }
+
+  // Print the default adjacency matrix, alias infinity as NA
   public void printMatrix() {
     for (List<Integer> col : adjacencyMatrix) {
       for (Integer x : col) {
@@ -140,19 +235,7 @@ public class Graph {
     }
   }
 
-  public static void printMatrix(ArrayList<ArrayList<Integer>> matrix) {
-    for (List<Integer> col : matrix) {
-      for (Integer x : col) {
-        if (x.equals(INFINITY)) {
-          System.out.format("%8s,", "NA");
-        } else {
-          System.out.format("%8d,", x);
-        }
-      }
-      System.out.println();
-    }
-  }
-
+  // build and print edge traffic, infinity is aliased as NA, null as 0
   public void printEdgeTraffic() {
     buildEdgeTraffic();
     for (int i = 0; i < size; i++) {
@@ -182,77 +265,14 @@ public class Graph {
     }
   }
 
-  public void pathCosts() {
-    maxPathCosts = new Integer[size][size];
-    minPathCosts = new Integer[size][size];
-    avgPathCosts = new Double[size][size];
-
-    // Calculate Min, Max, Average paths
-    for (int i = 0; i < size; i++) {
-      for (int j = 0; j < size; j++) {
-        int max = -1;
-        int min = INFINITY;
-        ArrayList<Integer> pathCost = new ArrayList<>();
-        if (shortestPaths.get(i).get(j) == null) {
-          maxPathCosts[i][j] = null;
-          minPathCosts[i][j] = null;
-          avgPathCosts[i][j] = null;
-          continue;
-        }
-        ArrayList<Integer> path = shortestPaths.get(i).get(j);
-        for (int hop = 1; hop < path.size(); hop++) {
-          // -1 for offset
-          int current = path.get(hop - 1) - 1;
-          int next = path.get(hop) - 1;
-          if (original[current][next] > max) {
-            max = original[current][next];
-          }
-          if (original[current][next] < min) {
-            min = original[current][next];
-          }
-          pathCost.add(original[current][next]);
-        }
-        maxPathCosts[i][j] = max;
-
-        minPathCosts[i][j] = min;
-        avgPathCosts[i][j] = pathAvg(pathCost);
-      }
-    }
-  }
-
-  public void printPath(int x, int y) {
-    if (maxPathCosts == null)
-      pathCosts();
-
-    ArrayList<Integer> path = path(x, y);
-    System.out.println(Arrays.toString(
-        path.toArray()));
-
-    System.out.println("Min path cost: " + minPathCosts[x][y]);
-    System.out.println("Max path cost: " + maxPathCosts[x][y]);
-    System.out.println("Avg path cost: " + avgPathCosts[x][y]);
-  }
-
-  private double pathAvg(ArrayList<Integer> path) {
-    double sum = 0;
-    for (int hop : path)
-      sum += hop;
-    return sum / path.size();
-  }
-
-  private void initializeShortestPaths() {
-    shortestPaths = new ArrayList<>(size);
-    for (int i = 0; i < size; i++) {
-      shortestPaths.add(i, new ArrayList<>(size));
-    }
-  }
-
+  // infinity is aliased as NA, null as 0
   public void printMinPaths() {
     if (minPathCosts == null)
       pathCosts();
 
     for (int i = 0; i < size; i++) {
-      for (int j = 0; j < size; j++) {;
+      for (int j = 0; j < size; j++) {
+        ;
         if (i == j) {
           System.out.format("%8s,", "0");
         } else if (minPathCosts[i][j] == null) {
@@ -266,12 +286,13 @@ public class Graph {
     System.out.println();
   }
 
+  // Evaluate path costs if needed, infinity is aliased as NA, null as 0
   public void printMaxPaths() {
     if (maxPathCosts == null)
       pathCosts();
 
     for (int i = 0; i < size; i++) {
-      for (int j = 0; j < size; j++) {;
+      for (int j = 0; j < size; j++) {
         if (i == j) {
           System.out.format("%8s,", "0");
         } else if (maxPathCosts[i][j] == null) {
@@ -285,12 +306,13 @@ public class Graph {
     System.out.println();
   }
 
+  // Evaluate path costs if needed, infinity is aliased as NA, null as 0
   public void printAvgPaths() {
     if (avgPathCosts == null)
       pathCosts();
 
     for (int i = 0; i < size; i++) {
-      for (int j = 0; j < size; j++) {;
+      for (int j = 0; j < size; j++) {
         if (i == j) {
           System.out.format("%8s,", "0");
         } else if (avgPathCosts[i][j] == null) {

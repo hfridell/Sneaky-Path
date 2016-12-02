@@ -32,8 +32,18 @@ public class Main {
   static Instant end;
 
   public static void main(String[] args) {
+    // Run all sample files or prompt user for input based on settings
     if (runAllFiles){
       for (String fileName : files) {
+        evaluateFile(fileName);
+        evaluateFile(fileName);
+        evaluateFile(fileName);
+        evaluateFile(fileName);
+        evaluateFile(fileName);
+        evaluateFile(fileName);
+        evaluateFile(fileName);
+        evaluateFile(fileName);
+        evaluateFile(fileName);
         evaluateFile(fileName);
       }
     } else {
@@ -43,6 +53,7 @@ public class Main {
   }
 
   private static void evaluateFile(String fileName){
+    // Change output to a file
     if (writeToFile) {
       try {
         System.setOut(new PrintStream(new BufferedOutputStream(
@@ -62,7 +73,7 @@ public class Main {
     GraphReader reader = new GraphReader(fileName);
     reader.read();
     end = Instant.now();
-    System.out.println("Elapsed Time: " + Duration.between(start, end));
+    System.out.println("Elapsed Time: " + Duration.between(start, end).toMillis());
     int startNode = reader.start-1;
     int finishNode = reader.finish-1;
     System.out.println("-----------------------------------------------------------------------------");
@@ -73,7 +84,7 @@ public class Main {
     end = Instant.now();
     original.printMatrix();
     System.out.println("Original:");
-    System.out.println("Elapsed Time: " + Duration.between(start, end));
+    System.out.println("Elapsed Time: " + Duration.between(start, end).toMillis());
     System.out.println("-----------------------------------------------------------------------------");
 
     start = Instant.now();
@@ -82,7 +93,7 @@ public class Main {
     end = Instant.now();
     original.printMatrix();
     System.out.println("All pairs shortest paths:");
-    System.out.println("Elapsed Time: " + Duration.between(start, end));
+    System.out.println("Elapsed Time: " + Duration.between(start, end).toMillis());
     System.out.println("-----------------------------------------------------------------------------");
 
     start = Instant.now();
@@ -90,7 +101,7 @@ public class Main {
     original.printShortestPaths();
     end = Instant.now();
     System.out.println("Actual shortest paths:");
-    System.out.println("Elapsed Time: " + Duration.between(start, end));
+    System.out.println("Elapsed Time: " + Duration.between(start, end).toMillis());
     System.out.println("-----------------------------------------------------------------------------");
 
     start = Instant.now();
@@ -98,7 +109,7 @@ public class Main {
     Graph.printMatrix(original.flowMatrix);
     end = Instant.now();
     System.out.println("Original flow Matrix:");
-    System.out.println("Elapsed Time: " + Duration.between(start, end));
+    System.out.println("Elapsed Time: " + Duration.between(start, end).toMillis());
     System.out.println("-----------------------------------------------------------------------------");
 
     start = Instant.now();
@@ -106,7 +117,7 @@ public class Main {
     original.printEdgeTraffic();
     end = Instant.now();
     System.out.println("Edge Traffic:");
-    System.out.println("Elapsed Time: " + Duration.between(start, end));
+    System.out.println("Elapsed Time: " + Duration.between(start, end).toMillis());
     System.out.println("-----------------------------------------------------------------------------");
 
     start = Instant.now();
@@ -116,7 +127,7 @@ public class Main {
     end = Instant.now();
     sneaky.printMatrix();
     System.out.println("All pairs sneaky paths:");
-    System.out.println("Elapsed Time: " + Duration.between(start, end));
+    System.out.println("Elapsed Time: " + Duration.between(start, end).toMillis());
     System.out.println("-----------------------------------------------------------------------------");
 
     start = Instant.now();
@@ -124,7 +135,7 @@ public class Main {
     sneaky.printShortestPaths();
     end = Instant.now();
     System.out.println("Actual sneaky paths:");
-    System.out.println("Elapsed Time: " + Duration.between(start, end));
+    System.out.println("Elapsed Time: " + Duration.between(start, end).toMillis());
     System.out.println("-----------------------------------------------------------------------------");
 
     start = Instant.now();
@@ -132,7 +143,7 @@ public class Main {
     sneaky.printMinPaths();
     end = Instant.now();
     System.out.println("Minimum cars seen:");
-    System.out.println("Elapsed Time: " + Duration.between(start, end));
+    System.out.println("Elapsed Time: " + Duration.between(start, end).toMillis());
     System.out.println("-----------------------------------------------------------------------------");
 
     start = Instant.now();
@@ -140,7 +151,7 @@ public class Main {
     sneaky.printMaxPaths();
     end = Instant.now();
     System.out.println("Maximum cars seen:");
-    System.out.println("Elapsed Time: " + Duration.between(start, end));
+    System.out.println("Elapsed Time: " + Duration.between(start, end).toMillis());
     System.out.println("-----------------------------------------------------------------------------");
 
     start = Instant.now();
@@ -148,7 +159,7 @@ public class Main {
     sneaky.printAvgPaths();
     end = Instant.now();
     System.out.println("Average cars seen:");
-    System.out.println("Elapsed Time: " + Duration.between(start, end));
+    System.out.println("Elapsed Time: " + Duration.between(start, end).toMillis());
     System.out.println("-----------------------------------------------------------------------------");
 
     System.out.println("Specified Shortest Path: " + reader.start + "," + reader.finish);
@@ -160,7 +171,7 @@ public class Main {
     System.out.println("-----------------------------------------------------------------------------");
 
     Instant totalEnd = Instant.now();
-    System.out.println("Total Running time: " + Duration.between(totalStart, totalEnd));
+    System.out.println("Total Running time: " + Duration.between(totalStart, totalEnd).toMillis());
     System.out.println("-----------------------------------------------------------------------------");
     System.out.println("-----------------------------------------------------------------------------");
   }
